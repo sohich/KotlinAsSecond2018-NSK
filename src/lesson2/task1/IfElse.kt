@@ -2,6 +2,8 @@
 package lesson2.task1
 
 import lesson1.task1.discriminant
+import lesson1.task1.sqr
+import java.lang.Math.*
 
 /**
  * Пример
@@ -33,7 +35,20 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * Мой возраст. Для заданного 0 < n < 200, рассматриваемого как возраст человека,
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
-fun ageDescription(age: Int): String = TODO()
+fun ageDescription(age: Int): String {
+    val twoLastDigits = age % 100
+    val lastDigit = age % 10
+    val suffix  = when  {
+        twoLastDigits in 11..19 -> "лет"
+        else -> when {
+            lastDigit == 0 || lastDigit in 5..9 -> "лет"
+            lastDigit in 2..4 -> "года"
+            else -> "год" // only 1 remains
+        }
+    }
+
+    return "$age $suffix"
+}
 
 /**
  * Простая
@@ -44,7 +59,33 @@ fun ageDescription(age: Int): String = TODO()
  */
 fun timeForHalfWay(t1: Double, v1: Double,
                    t2: Double, v2: Double,
-                   t3: Double, v3: Double): Double = TODO()
+                   t3: Double, v3: Double): Double {
+    var wayPoint = (t1 * v1 + t2 * v2 + t3 * v3) / 2
+    var resultTime = 0.0
+
+    if (t1 * v1 >= wayPoint) {
+        return resultTime + t1 * (wayPoint / (t1 * v1))
+    } else {
+        resultTime += t1
+        wayPoint -= t1 * v1
+    }
+
+    if (t2 * v2 >= wayPoint) {
+        return resultTime + t2 * (wayPoint / (t2 * v2))
+    } else {
+        resultTime += t2
+        wayPoint -= t2 * v2
+    }
+
+    if (t3 * v3 >= wayPoint) {
+        return resultTime + t3 * (wayPoint / (t3 * v3))
+    } else {
+        resultTime += t3
+        wayPoint -= t3 * v3
+    }
+
+    return resultTime
+}
 
 /**
  * Простая
@@ -57,7 +98,17 @@ fun timeForHalfWay(t1: Double, v1: Double,
  */
 fun whichRookThreatens(kingX: Int, kingY: Int,
                        rookX1: Int, rookY1: Int,
-                       rookX2: Int, rookY2: Int): Int = TODO()
+                       rookX2: Int, rookY2: Int): Int {
+    val field = Array(9, {_ -> IntArray(9, {_ -> 0})})
+
+    for (i in 1..8) field[rookY1][i] += 1
+    for (i in 1..8) field[i][rookX1] += 1
+
+    for (i in 1..8) field[rookY2][i] += 2
+    for (i in 1..8) field[i][rookX2] += 2
+
+    return field[kingY][kingX]
+}
 
 /**
  * Простая
@@ -71,7 +122,24 @@ fun whichRookThreatens(kingX: Int, kingY: Int,
  */
 fun rookOrBishopThreatens(kingX: Int, kingY: Int,
                           rookX: Int, rookY: Int,
-                          bishopX: Int, bishopY: Int): Int = TODO()
+                          bishopX: Int, bishopY: Int): Int {
+    val field = Array(9, {_ -> IntArray(9, {_ -> 0})})
+
+    for (i in 1..8) field[rookY][i] += 1
+    for (i in 1..8) field[i][rookX] += 1
+
+    val toLeftUpper = min(bishopX, bishopY)
+    val toLeftLower = min(bishopX, 8 - bishopY)
+    val toRightUpper = min(8 - bishopX, bishopY)
+    val toRightLower = min(8 - bishopX, 8 - bishopY)
+
+    for (i in 1..toLeftUpper) field[bishopY - i][bishopX - i] += 2
+    for (i in 1..toLeftLower) field[bishopY + i][bishopX - i] += 2
+    for (i in 1..toRightUpper) field[bishopY - i][bishopX + i] += 2
+    for (i in 1..toRightLower) field[bishopY + i][bishopX + i] += 2
+
+    return field[kingY][kingX]
+}
 
 /**
  * Простая
@@ -81,7 +149,30 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
  * прямоугольным (вернуть 1) или тупоугольным (вернуть 2).
  * Если такой треугольник не существует, вернуть -1.
  */
-fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
+fun triangleKind(a: Double, b: Double, c: Double): Int {
+    if (a + b <= c ||
+        a + c <= b ||
+        b + c <= a)
+        return -1
+
+    val cosA = findCos(a, b, c)
+    val cosB = findCos(b, a, c)
+    val cosC = findCos(c, a, b)
+
+    return max((max(angleKind(cosA), angleKind(cosB))), angleKind(cosC))
+}
+
+/**
+ * Calculates cos of angle that is opposite to "a" using theorem of cosinuses
+ */
+fun findCos(a : Double, b : Double, c : Double) : Double =
+        (sqr(b) + sqr(c) - sqr(a)) / (2 * b * c)
+
+fun angleKind(angle: Double) : Int = when {
+    angle == 0.0 -> 1
+    angle < 0 -> 2
+    else -> 0
+}
 
 /**
  * Средняя
@@ -91,4 +182,22 @@ fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = TODO()
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = when {
+    c in a..b && b in c..d -> b - c
+    c in a..b && d in a..b -> d - c
+    a in c..d && b in c..d -> b - a
+    a in c..d && d in a..d -> d - a
+    b == c || d == a -> 0
+    else -> -1
+}
+
+/*
+ABCD -> 0
+ACBD -> B - C
+ACDB -> D - C
+CABD -> B - A
+CADB -> D - A
+CDAB - > 0
+ */
+
+

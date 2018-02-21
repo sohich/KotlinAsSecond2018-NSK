@@ -2,6 +2,7 @@
 package lesson2.task2
 
 import lesson1.task1.sqr
+import java.lang.Math.*
 
 /**
  * Пример
@@ -17,7 +18,11 @@ fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
  * Четырехзначное число назовем счастливым, если сумма первых двух ее цифр равна сумме двух последних.
  * Определить, счастливое ли заданное число, вернуть true, если это так.
  */
-fun isNumberHappy(number: Int): Boolean = TODO()
+fun isNumberHappy(number: Int): Boolean {
+    val s = number.toString()
+
+    return (s[0] - '0') + (s[1] - '0') == (s[2] - '0') + (s[3] - '0')
+}
 
 /**
  * Простая
@@ -26,7 +31,7 @@ fun isNumberHappy(number: Int): Boolean = TODO()
  * Определить, угрожают ли они друг другу. Вернуть true, если угрожают.
  * Считать, что ферзи не могут загораживать друг друга.
  */
-fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean = TODO()
+fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean = (x1 == x2) || (y1 == y2) ||(abs(x1 - y1) == abs(x2 - y2))
 
 /**
  * Средняя
@@ -36,7 +41,7 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean = TODO()
  * Вернуть true, если утверждение верно
  */
 fun circleInside(x1: Double, y1: Double, r1: Double,
-                 x2: Double, y2: Double, r2: Double): Boolean = TODO()
+                 x2: Double, y2: Double, r2: Double): Boolean = r1 <= r2 && pointInsideCircle(x1, y1, x2, y2, r2 - r1)
 
 /**
  * Средняя
@@ -47,4 +52,37 @@ fun circleInside(x1: Double, y1: Double, r1: Double,
  * кирпич 4 х 4 х 4 пройдёт через отверстие 4 х 4.
  * Вернуть true, если кирпич пройдёт
  */
-fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean = TODO()
+fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
+    val minBrick : Int
+    val midBrick : Int
+
+    when {
+        a in b..c -> {
+            minBrick = b
+            midBrick = a
+        } a in c..b -> {
+            minBrick = c
+            midBrick = a
+        } b in a..c -> {
+            minBrick = a
+            midBrick = b
+        } b in c..a -> {
+            minBrick = c
+            midBrick = b
+        } c in a..b -> {
+            minBrick = a
+            midBrick = c
+        } c in b..a -> {
+            minBrick = b
+            midBrick = c
+        } else -> {
+            minBrick = 0
+            midBrick = 0
+        }
+    }
+
+    val minHole = min(r, s)
+    val maxHole = max(r, s)
+
+    return minBrick <= minHole && midBrick <= maxHole
+}

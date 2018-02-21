@@ -2,6 +2,7 @@
 package lesson3.task1
 
 import lesson1.task1.sqr
+import java.lang.Math.abs
 import java.lang.Math.sqrt
 
 /**
@@ -63,7 +64,7 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  * Найти количество цифр в заданном числе n.
  * Например, число 1 содержит 1 цифру, 456 -- 3 цифры, 65536 -- 5 цифр.
  */
-fun digitNumber(n: Int): Int = n.toString().length
+fun digitNumber(n: Int): Int = abs(n).toString().length
 
 /**
  * Простая

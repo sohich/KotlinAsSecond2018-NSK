@@ -2,6 +2,10 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
+import lesson1.task1.sqr
+import lesson3.task1.isPrime
+import lesson3.task1.minDivisor
+import java.lang.Math.sqrt
 
 /**
  * Пример
@@ -106,15 +110,17 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double = TODO()
+fun abs(v: List<Double>): Double = sqrt(v.map {sqr(it)} .sum())
+
 
 /**
  * Простая
  *
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
-fun mean(list: List<Double>): Double = TODO()
-
+fun mean(list: List<Double>): Double =
+        if (list.isNotEmpty()) list.sum() / list.size
+        else 0.0
 /**
  * Средняя
  *
@@ -123,7 +129,11 @@ fun mean(list: List<Double>): Double = TODO()
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun center(list: MutableList<Double>): MutableList<Double> = TODO()
+fun center(list: MutableList<Double>): MutableList<Double> {
+    val mean = mean(list)
+    for (i in 0 until list.size) list[i] -= mean
+    return list
+}
 
 /**
  * Средняя
@@ -132,7 +142,11 @@ fun center(list: MutableList<Double>): MutableList<Double> = TODO()
  * представленные в виде списков a и b. Скалярное произведение считать по формуле:
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.0.
  */
-fun times(a: List<Double>, b: List<Double>): Double = TODO()
+fun times(a: List<Double>, b: List<Double>): Double {
+    var result = 0.0
+    for (i in 0 until a.size) result += a[i] * b[i]
+    return result
+}
 
 /**
  * Средняя
@@ -142,7 +156,29 @@ fun times(a: List<Double>, b: List<Double>): Double = TODO()
  * Коэффициенты многочлена заданы списком p: (p0, p1, p2, p3, ..., pN).
  * Значение пустого многочлена равно 0.0 при любом x.
  */
-fun polynom(p: List<Double>, x: Double): Double = TODO()
+fun polynom(p: List<Double>, x: Double): Double {
+    var result = 0.0
+    var poweredArg = 1.0
+
+    for (it in p) {
+        result += poweredArg * it
+        poweredArg *= x
+    }
+
+    return result
+}
+
+fun intPolynom(p: List<Int>, x: Int): Int {
+    var result = 0
+    var poweredArg = 1
+
+    for (it in p) {
+        result += poweredArg * it
+        poweredArg *= x
+    }
+
+    return result
+}
 
 /**
  * Средняя
@@ -154,7 +190,16 @@ fun polynom(p: List<Double>, x: Double): Double = TODO()
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun accumulate(list: MutableList<Double>): MutableList<Double> = TODO()
+fun accumulate(list: MutableList<Double>): MutableList<Double> {
+    var sum = 0.0
+
+    for (i in 0 until list.size) {
+        sum += list[i]
+        list[i] = sum
+    }
+
+    return list
+}
 
 /**
  * Средняя
@@ -163,7 +208,18 @@ fun accumulate(list: MutableList<Double>): MutableList<Double> = TODO()
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
-fun factorize(n: Int): List<Int> = TODO()
+fun factorize(n: Int): List<Int> {
+    var list = listOf<Int>()
+    var tmp = n
+
+    while (tmp > 1) {
+        val div = minDivisor(tmp)
+        list += div
+        tmp /= div
+    }
+
+    return list.sorted()
+}
 
 /**
  * Сложная
@@ -171,7 +227,7 @@ fun factorize(n: Int): List<Int> = TODO()
  * Разложить заданное натуральное число n > 1 на простые множители.
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  */
-fun factorizeToString(n: Int): String = TODO()
+fun factorizeToString(n: Int): String = factorize(n).joinToString("*", "")
 
 /**
  * Средняя
@@ -180,7 +236,24 @@ fun factorizeToString(n: Int): String = TODO()
  * Результат перевода вернуть в виде списка цифр в base-ичной системе от старшей к младшей,
  * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
  */
-fun convert(n: Int, base: Int): List<Int> = TODO()
+fun convert(n: Int, base: Int): List<Int> {
+    var list = listOf<Int>()
+    var tmp = n
+
+    while (tmp > 0) {
+        list += tmp % base
+        tmp /= base
+    }
+
+    return list.reversed()
+}
+
+fun generateValues (size : Int) : Array<Char> =
+        Array (size, { i -> if (i < 10) '0' + i else 'a' + (i - 10) })
+
+fun main(args : Array<String>) {
+    for (it in generateValues(16)) println(it)
+}
 
 /**
  * Сложная
@@ -190,7 +263,11 @@ fun convert(n: Int, base: Int): List<Int> = TODO()
  * строчными буквами: 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
-fun convertToString(n: Int, base: Int): String = TODO()
+fun convertToString(n: Int, base: Int): String {
+    val list = convert(n , base)
+    val values = generateValues(base)
+    return list.map { it -> values[it]} .joinToString("")
+}
 
 /**
  * Средняя
@@ -199,7 +276,7 @@ fun convertToString(n: Int, base: Int): String = TODO()
  * из системы счисления с основанием base в десятичную.
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
-fun decimal(digits: List<Int>, base: Int): Int = TODO()
+fun decimal(digits: List<Int>, base: Int): Int = intPolynom(digits.reversed(), base)
 
 /**
  * Сложная
@@ -210,7 +287,13 @@ fun decimal(digits: List<Int>, base: Int): Int = TODO()
  * 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: str = "13c", base = 14 -> 250
  */
-fun decimalFromString(str: String, base: Int): Int = TODO()
+fun decimalFromString(str: String, base: Int): Int {
+    val values = generateValues(base)
+    var list = listOf<Int>()
+    for (digit in str) list += values.indexOf(digit)
+
+    return decimal(list, base)
+}
 
 /**
  * Сложная
@@ -220,7 +303,35 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+fun roman(n: Int): String  {
+    val map = mapOf(Pair(1, "I"),
+                    Pair(4, "IV"),
+                    Pair(5, "V"),
+                    Pair(9, "IX"),
+                    Pair(10, "X"),
+                    Pair(40, "XL"),
+                    Pair(50, "L"),
+                    Pair(90, "XC"),
+                    Pair(100, "C"),
+                    Pair(400, "CD"),
+                    Pair(500, "D"),
+                    Pair(900, "CM"),
+                    Pair(1000, "M")).toSortedMap(compareByDescending { it })
+
+    var result = ""
+    var tmp = n
+    while (tmp > 0) {
+        for (it in map) {
+            if (tmp >= it.key) {
+                result += it.value
+                tmp -= it.key
+                break
+            }
+        }
+    }
+    return result
+}
+
 
 /**
  * Очень сложная

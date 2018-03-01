@@ -78,7 +78,7 @@ fun dateStrToDigit(str: String): String {
 
         val year = list[2].toInt()
 
-        result = String.format("%02d.%02d.%02d", day, month, year)
+        result = String.format("%02d.%02d.%d", day, month, year)
     } catch (e : Exception) { }
     return result
 }

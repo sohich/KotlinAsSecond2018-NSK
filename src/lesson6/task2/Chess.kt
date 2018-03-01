@@ -72,6 +72,9 @@ fun square(notation: String): Square {
  * Ладья может пройти через клетку (3, 3) или через клетку (6, 1) к клетке (6, 3).
  */
 fun rookMoveNumber(start: Square, end: Square): Int {
+    if (!start.inside() || !end.inside())
+        throw IllegalArgumentException()
+
     var result = 0
 
     if (start.column != end.column)
@@ -105,6 +108,9 @@ fun rookTrajectory(start: Square, end: Square): List<Square> {
 
     if (start.column != end.column)
         list += Square(start.column, end.row)
+
+    if (start.row != end.row)
+        list += Square(start.row, end.column)
 
     list += end
 
@@ -154,6 +160,7 @@ fun isReachableByBishop(bishop : Square, cell : Square) =   ((bishop.column + bi
                                                             ((cell.column + cell.row) % 2)
 
 fun sameDiagonal(a : Square, b : Square) = abs(a.column - a.row) == abs(b.column - b.row)
+                                        || abs(a.column + a.row) == abs(b.column + b.row)
 
 /**
  * Сложная
@@ -226,7 +233,12 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
  * Пример: kingMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Король может последовательно пройти через клетки (4, 2) и (5, 2) к клетке (6, 3).
  */
-fun kingMoveNumber(start: Square, end: Square): Int = max(abs(start.column - end.column), abs(start.row - end.row))
+fun kingMoveNumber(start: Square, end: Square): Int {
+    if (!start.inside() || !end.inside())
+        throw IllegalArgumentException()
+
+    return max(abs(start.column - end.column), abs(start.row - end.row))
+}
 
 /**
  * Сложная

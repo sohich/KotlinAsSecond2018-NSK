@@ -1,6 +1,11 @@
 @file:Suppress("UNUSED_PARAMETER")
 package lesson6.task2
 
+import lesson6.task1.Line
+import lesson6.task1.Point
+import lesson6.task3.Graph
+import java.lang.Math.*
+
 /**
  * Клетка шахматной доски. Шахматная доска квадратная и имеет 8 х 8 клеток.
  * Поэтому, обе координаты клетки (горизонталь row, вертикаль column) могут находиться в пределах от 1 до 8.
@@ -21,7 +26,7 @@ data class Square(val column: Int, val row: Int) {
      * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
      * Для клетки не в пределах доски вернуть пустую строку
      */
-    fun notation(): String = TODO()
+    fun notation(): String = if (inside()) "${'a' + column - 1}$row" else ""
 }
 
 /**
@@ -31,7 +36,17 @@ data class Square(val column: Int, val row: Int) {
  * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
  * Если нотация некорректна, бросить IllegalArgumentException
  */
-fun square(notation: String): Square = TODO()
+fun square(notation: String): Square {
+    if (notation.length != 2)
+        throw IllegalArgumentException()
+
+    val cell = Square(notation[0] - 'a' + 1, notation[1] - '0')
+
+    if (!cell.inside())
+        throw IllegalArgumentException()
+
+    return cell
+}
 
 /**
  * Простая
@@ -56,7 +71,17 @@ fun square(notation: String): Square = TODO()
  * Пример: rookMoveNumber(Square(3, 1), Square(6, 3)) = 2
  * Ладья может пройти через клетку (3, 3) или через клетку (6, 1) к клетке (6, 3).
  */
-fun rookMoveNumber(start: Square, end: Square): Int = TODO()
+fun rookMoveNumber(start: Square, end: Square): Int {
+    var result = 0
+
+    if (start.column != end.column)
+        result += 1
+
+    if (start.row != end.row)
+        result += 1
+
+    return result
+}
 
 /**
  * Средняя
@@ -72,7 +97,19 @@ fun rookMoveNumber(start: Square, end: Square): Int = TODO()
  *          rookTrajectory(Square(3, 5), Square(8, 5)) = listOf(Square(3, 5), Square(8, 5))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun rookTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun rookTrajectory(start: Square, end: Square): List<Square> {
+    var list = listOf(start)
+
+    if (start == end)
+        return list
+
+    if (start.column != end.column)
+        list += Square(start.column, end.row)
+
+    list += end
+
+    return list
+}
 
 /**
  * Простая
@@ -97,7 +134,26 @@ fun rookTrajectory(start: Square, end: Square): List<Square> = TODO()
  * Примеры: bishopMoveNumber(Square(3, 1), Square(6, 3)) = -1; bishopMoveNumber(Square(3, 1), Square(3, 7)) = 2.
  * Слон может пройти через клетку (6, 4) к клетке (3, 7).
  */
-fun bishopMoveNumber(start: Square, end: Square): Int = TODO()
+fun bishopMoveNumber(start: Square, end: Square): Int {
+    if (!start.inside() || !end.inside())
+        throw IllegalArgumentException()
+
+    if (start == end)
+        return 0
+
+    if (!isReachableByBishop(start, end))
+        return -1
+
+    if (sameDiagonal(start, end))
+        return 1
+
+    return 2
+}
+
+fun isReachableByBishop(bishop : Square, cell : Square) =   ((bishop.column + bishop.row) % 2) ==
+                                                            ((cell.column + cell.row) % 2)
+
+fun sameDiagonal(a : Square, b : Square) = abs(a.column - a.row) == abs(b.column - b.row)
 
 /**
  * Сложная
@@ -117,7 +173,38 @@ fun bishopMoveNumber(start: Square, end: Square): Int = TODO()
  *          bishopTrajectory(Square(1, 3), Square(6, 8)) = listOf(Square(1, 3), Square(6, 8))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun bishopTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun bishopTrajectory(start: Square, end: Square): List<Square> {
+    if (!isReachableByBishop(start, end))
+        return listOf()
+
+    val list = listOf(start)
+
+    if (start == end)
+        return list
+
+    if (sameDiagonal(start, end))
+        return list + end
+
+    var startLine : Line
+    var endLine : Line
+    var crossPoint : Point
+    var crossCell : Square
+
+    startLine = Line(Point(start.column.toDouble(), start.row.toDouble()), PI / 4)
+    endLine = Line(Point(end.column.toDouble(), end.row.toDouble()), 3 * PI / 4)
+    crossPoint = startLine.crossPoint(endLine)
+    crossCell = Square((crossPoint.x + 0.5).toInt(), (crossPoint.y + 0.5).toInt())
+
+    if (crossCell.inside())
+        return list + crossCell + end
+
+    startLine = Line(Point(start.column.toDouble(), start.row.toDouble()), 3 * PI / 4)
+    endLine = Line(Point(end.column.toDouble(), end.row.toDouble()),  PI / 4)
+    crossPoint = startLine.crossPoint(endLine)
+    crossCell = Square(crossPoint.x.toInt(), crossPoint.y.toInt())
+
+    return list + crossCell + end
+}
 
 /**
  * Средняя
@@ -139,7 +226,7 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> = TODO()
  * Пример: kingMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Король может последовательно пройти через клетки (4, 2) и (5, 2) к клетке (6, 3).
  */
-fun kingMoveNumber(start: Square, end: Square): Int = TODO()
+fun kingMoveNumber(start: Square, end: Square): Int = max(abs(start.column - end.column), abs(start.row - end.row))
 
 /**
  * Сложная
@@ -155,7 +242,38 @@ fun kingMoveNumber(start: Square, end: Square): Int = TODO()
  *          kingTrajectory(Square(3, 5), Square(6, 2)) = listOf(Square(3, 5), Square(4, 4), Square(5, 3), Square(6, 2))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun kingTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun kingTrajectory(start: Square, end: Square): List<Square> {
+    var list = listOf(start)
+
+    if (start == end)
+        return list
+
+    val moveRight = start.column < end.column
+    val moveDown  = start.row < end.row
+
+    var kingPosition = start
+
+    while (kingPosition != end) {
+        val oldColumn = kingPosition.column
+        val newColumn = when {
+            oldColumn == end.column -> oldColumn
+            moveRight -> oldColumn + 1
+            else -> oldColumn - 1
+        }
+
+        val oldRow = kingPosition.row
+        val newRow = when {
+            oldRow == end.row -> oldRow
+            moveDown -> oldRow + 1
+            else -> oldRow - 1
+        }
+
+        kingPosition = Square(newColumn, newRow)
+        list += kingPosition
+    }
+
+    return list
+}
 
 /**
  * Сложная
@@ -180,7 +298,54 @@ fun kingTrajectory(start: Square, end: Square): List<Square> = TODO()
  * Пример: knightMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Конь может последовательно пройти через клетки (5, 2) и (4, 4) к клетке (6, 3).
  */
-fun knightMoveNumber(start: Square, end: Square): Int = TODO()
+fun knightMoveNumber(start: Square, end: Square): Int {
+    if (!start.inside() || !end.inside())
+        throw IllegalArgumentException()
+
+    if (start == end)
+        return 0
+
+    return createChessboardGraph().bfs(start.notation(), end.notation())
+}
+
+fun createChessboardGraph() : Graph {
+    val g = Graph()
+
+    for (j in 1..8)
+        for (i in 1..8)
+            g.addVertex(Square(i, j).notation())
+
+    for (j in 1..8)
+        for (i in 1..8) {
+            val cell = Square(i, j).notation()
+
+            var neighbor = Square(i - 2, j - 1)
+            if (neighbor.inside()) g.connect(cell, neighbor.notation())
+
+            neighbor = Square(i - 2, j + 1)
+            if (neighbor.inside()) g.connect(cell, neighbor.notation())
+
+            neighbor = Square(i - 1, j - 2)
+            if (neighbor.inside()) g.connect(cell, neighbor.notation())
+
+            neighbor = Square(i - 1, j + 2)
+            if (neighbor.inside()) g.connect(cell, neighbor.notation())
+
+            neighbor = Square(i + 1, j - 2)
+            if (neighbor.inside()) g.connect(cell, neighbor.notation())
+
+            neighbor = Square(i + 1, j + 2)
+            if (neighbor.inside()) g.connect(cell, neighbor.notation())
+
+            neighbor = Square(i + 2, j - 1)
+            if (neighbor.inside()) g.connect(cell, neighbor.notation())
+
+            neighbor = Square(i + 2, j + 1)
+            if (neighbor.inside()) g.connect(cell, neighbor.notation())
+        }
+
+    return g
+}
 
 /**
  * Очень сложная

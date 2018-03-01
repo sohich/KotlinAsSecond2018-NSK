@@ -16,6 +16,9 @@ class Graph {
     }
 
     private fun connect(first: Vertex, second: Vertex) {
+//        if (first.neighbors.contains(second))
+//            return
+
         first.neighbors.add(second)
         second.neighbors.add(first)
     }
@@ -59,6 +62,9 @@ class Graph {
      */
     fun dfs(start: String, finish: String): Int = dfs(this[start], this[finish], setOf()) ?: -1
 
+    /**
+     * это говно не работает
+     */
     private fun dfs(start: Vertex, finish: Vertex, visited: Set<Vertex>): Int? =
             if (start == finish) 0
             else {

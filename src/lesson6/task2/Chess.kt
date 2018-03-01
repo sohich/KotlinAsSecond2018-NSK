@@ -106,11 +106,9 @@ fun rookTrajectory(start: Square, end: Square): List<Square> {
     if (start == end)
         return list
 
-    if (start.column != end.column)
+    if (start.column != end.column && start.row != end.row)
         list += Square(start.column, end.row)
 
-    if (start.row != end.row)
-        list += Square(start.row, end.column)
 
     list += end
 
@@ -159,8 +157,8 @@ fun bishopMoveNumber(start: Square, end: Square): Int {
 fun isReachableByBishop(bishop : Square, cell : Square) =   ((bishop.column + bishop.row) % 2) ==
                                                             ((cell.column + cell.row) % 2)
 
-fun sameDiagonal(a : Square, b : Square) = abs(a.column - a.row) == abs(b.column - b.row)
-                                        || abs(a.column + a.row) == abs(b.column + b.row)
+fun sameDiagonal(a : Square, b : Square) = a.column - a.row == b.column - b.row
+                                        || a.column + a.row == b.column + b.row
 
 /**
  * Сложная

@@ -178,6 +178,11 @@ fun sameDiagonal(a : Square, b : Square) = a.column - a.row == b.column - b.row
  *          bishopTrajectory(Square(1, 3), Square(6, 8)) = listOf(Square(1, 3), Square(6, 8))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
+fun main(args : Array<String>) {
+    println(bishopTrajectory(Square(3, 8), Square(1, 2)))
+}
+
+
 fun bishopTrajectory(start: Square, end: Square): List<Square> {
     if (!isReachableByBishop(start, end))
         return listOf()
@@ -198,7 +203,7 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
     startLine = Line(Point(start.column.toDouble(), start.row.toDouble()), PI / 4)
     endLine = Line(Point(end.column.toDouble(), end.row.toDouble()), 3 * PI / 4)
     crossPoint = startLine.crossPoint(endLine)
-    crossCell = Square((crossPoint.x + 0.5).toInt(), (crossPoint.y + 0.5).toInt())
+    crossCell = Square(round(crossPoint.x).toInt(), round(crossPoint.y).toInt())
 
     if (crossCell.inside())
         return list + crossCell + end
@@ -206,7 +211,7 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
     startLine = Line(Point(start.column.toDouble(), start.row.toDouble()), 3 * PI / 4)
     endLine = Line(Point(end.column.toDouble(), end.row.toDouble()),  PI / 4)
     crossPoint = startLine.crossPoint(endLine)
-    crossCell = Square(crossPoint.x.toInt(), crossPoint.y.toInt())
+    crossCell = Square(round(crossPoint.x).toInt(), round(crossPoint.y).toInt())
 
     return list + crossCell + end
 }

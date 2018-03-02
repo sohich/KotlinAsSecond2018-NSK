@@ -3,6 +3,7 @@ package lesson7.task2
 
 import lesson7.task1.Matrix
 import lesson7.task1.createMatrix
+import java.lang.Math.min
 
 // Все задачи в этом файле требуют наличия реализации интерфейса "Матрица" в Matrix.kt
 
@@ -59,7 +60,34 @@ operator fun Matrix<Int>.plus(other: Matrix<Int>): Matrix<Int> {
  * 10 11 12  5
  *  9  8  7  6
  */
-fun generateSpiral(height: Int, width: Int): Matrix<Int> = TODO()
+fun generateSpiral(height: Int, width: Int): Matrix<Int> {
+    var result = createMatrix(height, width, 0)
+    var counter = 0
+    var m = height
+    var n = width
+    var k = 0
+    var l = 0
+
+    while (k < m && l < n) {
+        for (i in l until n) result[k, i] = ++counter
+        ++k
+
+        for (i in k until m) result[i, n - 1] = ++counter
+        --n
+
+        if (k < m) {
+            for (i in n - 1 downTo l) result[m - 1, i] = ++counter
+            --m
+        }
+
+        if (l < n) {
+            for (i in m - 1 downTo k) result[i, l] = ++counter
+            ++l
+        }
+    }
+
+    return result
+}
 
 /**
  * Сложная
@@ -75,7 +103,15 @@ fun generateSpiral(height: Int, width: Int): Matrix<Int> = TODO()
  *  1  2  2  2  2  1
  *  1  1  1  1  1  1
  */
-fun generateRectangles(height: Int, width: Int): Matrix<Int> = TODO()
+fun generateRectangles(height: Int, width: Int): Matrix<Int> {
+    val result = createMatrix(height, width, 0)
+
+    for (i in 0 until height)
+        for (j in 0 until width)
+            result[i, j] = min(min(i + 1, j + 1), min(height - i, width - j))
+
+    return result
+}
 
 /**
  * Сложная

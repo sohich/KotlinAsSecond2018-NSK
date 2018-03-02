@@ -38,32 +38,53 @@ interface Matrix<E> {
  * height = высота, width = ширина, e = чем заполнить элементы.
  * Бросить исключение IllegalArgumentException, если height или width <= 0.
  */
-fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> = TODO()
+fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> = MatrixImpl(height, width, e)
 
 /**
  * Средняя сложность
  *
  * Реализация интерфейса "матрица"
  */
-class MatrixImpl<E> : Matrix<E> {
-    override val height: Int = TODO()
+class MatrixImpl<E> (pHeight : Int, pWidth : Int, pDefaultValue : E) : Matrix<E> {
+    override val width : Int
+    override val height : Int
 
-    override val width: Int = TODO()
+    private var values : MutableList<MutableList<E>>
 
-    override fun get(row: Int, column: Int): E  = TODO()
+    init {
+        if (pWidth <= 0 || pHeight <= 0)
+            throw IllegalArgumentException()
 
-    override fun get(cell: Cell): E  = TODO()
+        this.height = pHeight
+        this.width = pWidth
+        values  = MutableList(height, {_ -> MutableList(width, {_ -> pDefaultValue})})
+    }
+
+    override fun get(row: Int, column: Int): E  = values[row][column]
+
+    override fun get(cell: Cell): E  = values[cell.row][cell.column]
 
     override fun set(row: Int, column: Int, value: E) {
-        TODO()
+        values[row][column] = value
     }
 
     override fun set(cell: Cell, value: E) {
-        TODO()
+        values[cell.row][cell.column] = value
     }
 
-    override fun equals(other: Any?) = TODO()
+    override fun toString(): String = "Matrix $width x $height"
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
 
-    override fun toString(): String = TODO()
+        other as MatrixImpl<*>
+
+        if (values != other.values) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int = values.hashCode()
 }
+
 

@@ -110,7 +110,10 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double = sqrt(v.map {sqr(it)} .sum())
+fun abs(v: List<Double>): Double =
+        sqrt(v
+                .map { sqr(it) }
+                .sum())
 
 
 /**
@@ -168,7 +171,7 @@ fun polynom(p: List<Double>, x: Double): Double {
     return result
 }
 
-fun intPolynom(p: List<Int>, x: Int): Int {
+fun polynom(p: List<Int>, x: Int): Int {
     var result = 0
     var poweredArg = 1
 
@@ -218,7 +221,7 @@ fun factorize(n: Int): List<Int> {
         tmp /= div
     }
 
-    return list.sorted()
+    return list
 }
 
 /**
@@ -276,7 +279,7 @@ fun convertToString(n: Int, base: Int): String {
  * из системы счисления с основанием base в десятичную.
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
-fun decimal(digits: List<Int>, base: Int): Int = intPolynom(digits.reversed(), base)
+fun decimal(digits: List<Int>, base: Int): Int = polynom(digits.reversed(), base)
 
 /**
  * Сложная

@@ -172,7 +172,7 @@ class Line private constructor(val b: Double, val angle: Double) {
             return Point(other.b, tan(angle) * other.b + b)
         }
 
-        val x = ( other.b / cos(other.angle) - b / cos(angle)) / (tan(angle) - tan(other.angle))
+        val x = (other.b / cos(other.angle) - b / cos(angle)) / (tan(angle) - tan(other.angle))
 
         return Point(x, tan(angle) * x + b / cos(angle))
     }

@@ -65,24 +65,26 @@ fun timeForHalfWay(t1: Double, v1: Double,
 
     if (t1 * v1 >= wayPoint) {
         return resultTime + t1 * (wayPoint / (t1 * v1))
-    } else {
-        resultTime += t1
-        wayPoint -= t1 * v1
     }
+
+    resultTime += t1
+    wayPoint -= t1 * v1
+
 
     if (t2 * v2 >= wayPoint) {
         return resultTime + t2 * (wayPoint / (t2 * v2))
-    } else {
-        resultTime += t2
-        wayPoint -= t2 * v2
     }
+
+    resultTime += t2
+    wayPoint -= t2 * v2
+
 
     if (t3 * v3 >= wayPoint) {
         return resultTime + t3 * (wayPoint / (t3 * v3))
-    } else {
-        resultTime += t3
-        wayPoint -= t3 * v3
     }
+
+    resultTime += t3
+    wayPoint -= t3 * v3
 
     return resultTime
 }
@@ -99,15 +101,14 @@ fun timeForHalfWay(t1: Double, v1: Double,
 fun whichRookThreatens(kingX: Int, kingY: Int,
                        rookX1: Int, rookY1: Int,
                        rookX2: Int, rookY2: Int): Int {
-    val field = Array(9, {_ -> IntArray(9, {_ -> 0})})
+    var result = 0
+    if (kingX == rookX1 || kingY == rookY1)
+        result += 1
 
-    for (i in 1..8) field[rookY1][i] += 1
-    for (i in 1..8) field[i][rookX1] += 1
+    if (kingX == rookX2 || kingY == rookY2)
+        result += 2
 
-    for (i in 1..8) field[rookY2][i] += 2
-    for (i in 1..8) field[i][rookX2] += 2
-
-    return field[kingY][kingX]
+    return result
 }
 
 /**
@@ -123,22 +124,14 @@ fun whichRookThreatens(kingX: Int, kingY: Int,
 fun rookOrBishopThreatens(kingX: Int, kingY: Int,
                           rookX: Int, rookY: Int,
                           bishopX: Int, bishopY: Int): Int {
-    val field = Array(9, {_ -> IntArray(9, {_ -> 0})})
+    var result = 0
+    if (kingX == rookX || kingY == rookY)
+        result += 1
 
-    for (i in 1..8) field[rookY][i] += 1
-    for (i in 1..8) field[i][rookX] += 1
+    if (kingX + kingY == bishopX + bishopY || kingX - kingY == bishopX - bishopY)
+        result += 2
 
-    val toLeftUpper = min(bishopX, bishopY)
-    val toLeftLower = min(bishopX, 8 - bishopY)
-    val toRightUpper = min(8 - bishopX, bishopY)
-    val toRightLower = min(8 - bishopX, 8 - bishopY)
-
-    for (i in 1..toLeftUpper) field[bishopY - i][bishopX - i] += 2
-    for (i in 1..toLeftLower) field[bishopY + i][bishopX - i] += 2
-    for (i in 1..toRightUpper) field[bishopY - i][bishopX + i] += 2
-    for (i in 1..toRightLower) field[bishopY + i][bishopX + i] += 2
-
-    return field[kingY][kingX]
+    return result
 }
 
 /**
@@ -182,22 +175,7 @@ fun angleKind(angle: Double) : Int = when {
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = when {
-    c in a..b && b in c..d -> b - c
-    c in a..b && d in a..b -> d - c
-    a in c..d && b in c..d -> b - a
-    a in c..d && d in a..d -> d - a
-    b == c || d == a -> 0
-    else -> -1
-}
 
-/*
-ABCD -> 0
-ACBD -> B - C
-ACDB -> D - C
-CABD -> B - A
-CADB -> D - A
-CDAB - > 0
- */
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = max(min(b, d) - max(a, c), -1)
 
 

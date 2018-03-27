@@ -323,13 +323,11 @@ fun roman(n: Int): String  {
 
     var result = ""
     var tmp = n
-    while (tmp > 0) {
-        for (it in map) {
-            if (tmp >= it.key) {
-                result += it.value
-                tmp -= it.key
-                break
-            }
+
+    for (it in map) {
+        while (tmp >= it.key) {
+            result += it.value
+            tmp -= it.key
         }
     }
     return result

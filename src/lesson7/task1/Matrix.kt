@@ -45,18 +45,13 @@ fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> = MatrixImpl(heig
  *
  * Реализация интерфейса "матрица"
  */
-class MatrixImpl<E> (pHeight : Int, pWidth : Int, pDefaultValue : E) : Matrix<E> {
-    override val width : Int
-    override val height : Int
-
+class MatrixImpl<E> (override val height : Int, override val width : Int, pDefaultValue : E) : Matrix<E> {
     private var values : MutableList<MutableList<E>>
 
     init {
-        if (pWidth <= 0 || pHeight <= 0)
+        if (width <= 0 || height <= 0)
             throw IllegalArgumentException()
 
-        this.height = pHeight
-        this.width = pWidth
         values  = MutableList(height, {_ -> MutableList(width, {_ -> pDefaultValue})})
     }
 
